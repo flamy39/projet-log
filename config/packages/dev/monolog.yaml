@@ -1,10 +1,23 @@
 monolog:
+    channels: ["database","toto"]
     handlers:
         main:
             type: stream
             path: "%kernel.logs_dir%/%kernel.environment%.log"
             level: debug
-            channels: ["!event"]
+            channels: ["!event","!security"]
+        security:
+            level: info
+            type: rotating_file
+            path: "%kernel.logs_dir%/security.%kernel.environment%.log"
+            max_files: 10
+            channels: [ "security" ]
+        # Création d'un handler permettant d'écrire les logs dans la base de données
+        databaseHandler:
+            channels: ["database"]
+            type: service       # le handler fait référence à une classe déclarée comme un service
+            id: dbHandler       # id du service déclaré dans service.yaml
+
         # uncomment to get logging in your browser
         # you may have to allow bigger header sizes in your Web server configuration
         #firephp:
